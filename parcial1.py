@@ -14,13 +14,17 @@ class RegistroAtencion():
         self.bibliotecario = Bibliotecario(codigo_usuario, nombre_empleado)
 
     def cargar_recursos(self, recurso: str):
-        if len(self.__recursos_cuenta) > 4:
+        if len(self.__recursos_cuenta) >= 4:
             raise ValueError("Limite de recurso por atención alcanzado")
         return self.__recursos_cuenta.append(recurso)
     
     @property
     def acceder_lista_recursos(self):
         return tuple(self.__recursos_cuenta)
+    
+    def ciclo_calcular_multas(self):
+        for recurso in self.__recursos_cuenta:
+            recurso.calcular_penalizacion(recurso)
     
     
 class Recurso(ABC):
@@ -40,10 +44,12 @@ class PrestamoLibro(Recurso):
     def calcular_penalizacion(self, factor_penalizacion: int):
         multa = self.horas_exceso * 2.25
 
-class UsoSaalaEstudio(Recurso):
+class UsoSalaEstudio(Recurso):
     def __init__(self, codigo_identificador):
         super().__init__(codigo_identificador)
         self.alumnos_espera = []
     
     def calcular_penalizacion(self, factor_penalizacion: int):
         multa = self.horas_exceso * factor_penalizacion
+        
+
