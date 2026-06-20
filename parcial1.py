@@ -12,6 +12,7 @@ class RegistroAtencion():
         self.carnet_alumno = carnet_alumno
         self.__recursos_cuenta = []
         self.bibliotecario = Bibliotecario(codigo_usuario, nombre_empleado)
+        self.estado = "CUENTA_ACTIVA"
 
     def cargar_recursos(self, recurso: str):
         if len(self.__recursos_cuenta) >= 4:
@@ -23,10 +24,22 @@ class RegistroAtencion():
         return tuple(self.__recursos_cuenta)
     
     def ciclo_calcular_multas(self):
+        if self.estado == "CUENTA SUSPENDIDA":
+            return
+        
+        if len(self.__recursos_cuenta) == 0:
+            return 
+        
         for recurso in self.__recursos_cuenta:
             recurso.calcular_penalizacion(recurso)
-    
-    
+            
+        suma_multa = sum(m.calcular_penalizacion() for m in self.__recursos_cuenta)
+        promedio = suma_multa / len(self.__recursos_cuenta)
+        
+        if promedio > 15 or (self.bibliotecario.Bibliotecario.codigo_usuario ):
+            return self.estado("CUENTA SUSPENDIDA")
+     
+     
 class Recurso(ABC):
     def __init__(self, codigo_identificador):
         self.codigo_identificador = codigo_identificador
@@ -42,7 +55,8 @@ class PrestamoLibro(Recurso):
         super().__init__(codigo_identificador)
         
     def calcular_penalizacion(self, factor_penalizacion: int):
-        multa = self.horas_exceso * 2.25
+        return self.horas_exceso * 2.25
+
 
 class UsoSalaEstudio(Recurso):
     def __init__(self, codigo_identificador):
@@ -50,6 +64,7 @@ class UsoSalaEstudio(Recurso):
         self.alumnos_espera = []
     
     def calcular_penalizacion(self, factor_penalizacion: int):
-        multa = self.horas_exceso * factor_penalizacion
+        return self.horas_exceso * factor_penalizacion
         
+
 
